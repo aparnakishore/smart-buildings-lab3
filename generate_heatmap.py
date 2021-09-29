@@ -4,6 +4,7 @@ import utility as util
 from datetime import datetime
 import seaborn as sn
 import matplotlib.pyplot as plt 
+import matplotlib.image as mpimg 
 import csv
 import numpy as np
 from pylab import savefig
@@ -15,7 +16,6 @@ def generate_linklab_heatmap(start_datetime, end_datetime , fields, export_filep
     
     s = start_datetime
     e = end_datetime
-    save_path = export_filepath
 
     df = pd.read_csv("book_with_grids.csv")
     grid = list(set(df['grid']))
@@ -64,19 +64,41 @@ def generate_linklab_heatmap(start_datetime, end_datetime , fields, export_filep
         hm = sn.heatmap(data = arr_2d, cmap = cmap,linewidths=linewidths,linecolor=linecolor, alpha=0.5, zorder = 2, norm=log_norm, cbar_kws={"ticks": cbar_ticks}, xticklabels=xticklabels,
         yticklabels=yticklabels)
 
+        # add lll grid image behind heatmap
+        map_img = mpimg.imread('lll_grid.png')
+        hm.imshow(map_img,
+                aspect = hm.get_aspect(),
+                extent = hm.get_xlim() + hm.get_ylim(),
+                zorder = 1) #put the map under the heatmap
+
         figure = hm.get_figure()
-        path = os.path.join(save_path,'lab_heatmap_1.png')
-        figure.savefig(path, dpi=400) 
-        return path 
+        # path = os.path.join(save_path,'lab_heatmap_1.png')
+        figure.savefig(export_filepath, dpi=600) 
+        return export_filepath
     except:
         return None
     
+def main():
+    # ask user for heatmap fxn arguments
+    start = input("Enter a start date (ex. 2020,1,1): ")
+    s = start.split(',')
+    s = [int(i) for i in s]
+    y = s[0]
+    m = s[1]
+    d = s[2]
+    start = datetime(y,m,d)
+    end = input("Enter an end date (ex. 2020,10,1): ")
+    e = end.split(',')
+    e = [int(i) for i in e]
+    y = e[0]
+    m = e[1]
+    d = e[2]
+    end = datetime(y,m,d)
+    fil = input("Enter a field/s of interest (ex. Humidity_%, Temperature_°C, T-Sensor): ")
+    fil = fil.split(',')
+    filepath = input("Enter a desired filepath to export your heatmap (ex. C:\\Users\\John\\lll-heatmap.png): ")
+    path = generate_linklab_heatmap(start, end , fil, filepath)
+    print(path)
 
 if __name__ == '__main__':
-    
-    start = datetime(2020,1,1)
-    end = datetime(2020,1,2)
-    fil = ['Illumination_lx', 'Range select', 'Supply voltage_V', 'rssi']
-    filepath = "/Users/aparnak/Desktop/timeseries"   
-    path = generate_linklab_heatmap(start, end , fil, filepath)
-    print (path)
+    main()
