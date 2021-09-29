@@ -61,7 +61,7 @@ def generate_linklab_heatmap(start_datetime, end_datetime , fields, export_filep
         cbar_ticks = [math.pow(10, i) for i in range(math.floor(math.log10(arr_2d.min().min())), 1+math.ceil(math.log10(arr_2d.max().max())))]
 
         # plotting the heatmap
-        hm = sn.heatmap(data = arr_2d, cmap = cmap,linewidths=linewidths,linecolor=linecolor, alpha=0.5, zorder = 2, norm=log_norm, cbar_kws={"ticks": cbar_ticks}, xticklabels=xticklabels,
+        hm = sn.heatmap(data = arr_2d, cmap = cmap,linewidths=linewidths,linecolor=linecolor, alpha=0.5, zorder = 2, norm=log_norm, cbar_kws={"ticks": cbar_ticks, "label": 'Datapoints'}, xticklabels=xticklabels,
         yticklabels=yticklabels)
 
         # add lll grid image behind heatmap
@@ -96,7 +96,7 @@ def main():
     end = datetime(y,m,d)
     fil = input("Enter a field/s of interest (ex. Humidity_%, Temperature_°C, T-Sensor): ")
     fil = fil.split(',')
-    filepath = input("Enter a desired filepath to export your heatmap (ex. C:\\Users\\John\\lll-heatmap.png): ")
+    filepath = input(r"Enter a desired filepath to export your heatmap (ex. C:\\Users\\John\\lll-heatmap.png): ")
     path = generate_linklab_heatmap(start, end , fil, filepath)
     print(path)
 
